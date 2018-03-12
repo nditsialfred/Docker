@@ -1,26 +1,19 @@
-FROM jaskipper/alpine-apache-php7
+FROM nimmis/alpine as churchcrm
 MAINTAINER ChurchCRM
 
-RUN apk update
-RUN apk upgrade --repository http://dl-4.alpinelinux.org/alpine/edge/community \
-                --repository https://nl.alpinelinux.org/alpine/edge/main
+WORKDIR /
 
 RUN apk add --no-cache \
-            jq \
-            php7-session@community \
-            php7-pdo@community \
-            php7-xml@community \
-            php7-exif@community \
-            php7-pdo_mysql@community \
-            php7-gettext@community \
-            php7-iconv@community
+    curl \
+    wget \
+    ca-certificates
 
-RUN mkdir /web/churchcrm
+RUN crmlatest=$(curl -s https://api.github.com/repos/churchCRM/CRM/releases/latest | grep "browser_download_url.*zip" | cut -d '"' -f 4); \
+    wget $crmlatest; \
+    unzip -q *.zip;
 
-COPY httpd.conf /etc/apache2
-COPY 60-churchcrm /etc/run_always
 
-RUN chmod +x /etc/run_always/60-churchcrm
+FROM nimmis/alpine
 
-# Enable Terminal
-ENV TERM xterm
+WORKDIR /web/html
+COPY --from=churchcrm /churchcrm /web/html

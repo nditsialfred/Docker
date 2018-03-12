@@ -2,20 +2,56 @@
 # from this file by first filling in your password and db info in the .env
 # file and then running "docker-compose build", "docker-compose up" in terminal.
 
-version: '2'
+version: '3.5'
 
 services:
 
-  database: #Name of DB Host
-    container_name: database
-    image: jaskipper/alpine-mariadb
-    env_file:
-      - .env
+  crmdatabase: #Name of DB Host
+    container_name: crm-database
+    image: mariadb:10.2
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/MYSQL_ROOT_PASSWORD
+      MYSQL_DATABASE: churchcrm
+      MYSQL_USER_FILE: /run/secrets/MYSQL_USER
+      MYSQL_PASSWORD_FILE: /run/secrets/MYSQL_PASSWORD
+    secrets:
+      - MYSQL_PASSWORD
+      - MYSQL_ROOT_PASSWORD
+      - MYSQL_USER
+
+  alpinephp7:
+    container_name: crm-alpinephp7
+    build: ./buildphp
+    ports:
+      - "80:80"
+    volumes:
+      - html-volume:/web/html
+    environment:
+      MYSQL_DATABASE: churchcrm
+      MYSQL_DB_HOST: crmdatabase
+      MYSQL_PASSWORD_FILE: /run/secrets/MYSQL_PASSWORD
+      MYSQL_USER_FILE: /run/secrets/MYSQL_USER
+    secrets:
+      - MYSQL_PASSWORD
+      - MYSQL_ROOT_PASSWORD
+      - MYSQL_USER
 
   churchcrm:
     container_name: churchcrm
-    build: ./build-files
-    ports:
-      - "80:80"
-    env_file:
-      - .env
+    build:
+      context: ./build-files
+    volumes:
+      - html-volume:/web/html
+    tty: true
+
+volumes:
+  html-volume:
+
+secrets:
+
+  MYSQL_ROOT_PASSWORD:
+    file: ./secrets/MYSQL_ROOT_PASSWORD
+  MYSQL_PASSWORD:
+    file: ./secrets/MYSQL_PASSWORD
+  MYSQL_USER:
+    file: ./secrets/MYSQL_USER
