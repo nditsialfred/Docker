@@ -21,7 +21,7 @@ services:
 
   alpinephp7:
     container_name: crm-alpinephp7
-    build: ./buildphp
+    build: ./build-php
     ports:
       - "80:80"
     volumes:
@@ -39,7 +39,7 @@ services:
   churchcrm:
     container_name: churchcrm
     build:
-      context: ./build-files
+      context: ./build-churchcrm
     volumes:
       - html-volume:/web/html
     tty: true
