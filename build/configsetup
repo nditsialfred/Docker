@@ -1,15 +1,18 @@
 #!/bin/sh
 cp /usr/local/apache2/htdocs/Include/Config.php.example /usr/local/apache2/htdocs/Include/Config.php
 
+# Import Docker Secrets
 MYSQL_USER=$(cat /run/secrets/MYSQL_USER)
-MYSQL_PASSWORD=$(cat /run/secrets/MYSQL_PASSWORD)
+MYSQL_USER_PWD=$(cat /run/secrets/MYSQL_USER_PWD)
 
+#Add Server Name to HTTPD-SSL
 sed -i "s/ServerName www.example.com:443/ServerName localhost:443/g" /usr/local/apache2/conf/extra/httpd-ssl.conf
-#sed -i "s/Listen 443/Listen 172.22.0.3:443/g" /usr/local/apache2/conf/extra/httpd-ssl.conf
+
+# Create ChurchCRM Config File
 sed -i "s/||DB_SERVER_NAME||/$MYSQL_DB_HOST/g" /usr/local/apache2/htdocs/Include/Config.php
 sed -i "s/||DB_NAME||/$MYSQL_DATABASE/g" /usr/local/apache2/htdocs/Include/Config.php
 sed -i "s/||DB_USER||/$MYSQL_USER/g" /usr/local/apache2/htdocs/Include/Config.php
-sed -i "s/||DB_PASSWORD||/$MYSQL_PASSWORD/g" /usr/local/apache2/htdocs/Include/Config.php
+sed -i "s/||DB_PASSWORD||/$MYSQL_USER_PWD/g" /usr/local/apache2/htdocs/Include/Config.php
 sed -i "s/||URL||//g" /usr/local/apache2/htdocs/Include/Config.php
 sed -i "s/||ROOT_PATH||//g" /usr/local/apache2/htdocs/Include/Config.php
 

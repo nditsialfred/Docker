@@ -10,6 +10,7 @@ RUN echo "@edge http://dl-3.alpinelinux.org/alpine/edge/main" >> /etc/apk/reposi
     apk add --upgrade apk-tools@edge && \
     apk upgrade && \
     apk add --no-cache \
+    bash \
     curl \
     libressl \
     openssl \
@@ -43,12 +44,13 @@ COPY ./httpd.conf /usr/local/apache2/conf/httpd.conf
 # SSL Generation
 WORKDIR /usr/local/apache2/conf/
 
-RUN openssl genrsa -des3 -passout pass:x -out server.pass.key 2048 && \
-    openssl rsa -passin pass:x -in server.pass.key -out server.key && \
-    rm server.pass.key && \
-    openssl req -new -key server.key -out server.csr \
-    -subj "/C=US/ST=Tennessee/L=Nashville/O=OrgName/OU=IT Department/CN=localhost" && \
-    openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
+COPY ./server.csr.cnf .
+COPY ./v3.ext .
+
+RUN /bin/bash -c "openssl genrsa -des3 -passout pass:xxxx -out rootCA.key 2048" && \
+    /bin/bash -c "openssl req -x509 -passin pass:xxxx -new -nodes -key rootCA.key -sha256 -days 1024 -out rootCA.pem -config <( cat server.csr.cnf )" && \
+    /bin/bash -c "openssl req -new -sha256 -nodes -out server.csr -newkey rsa:2048 -keyout server.key -config <( cat server.csr.cnf )" && \
+    /bin/bash -c "openssl x509 -req -passin pass:xxxx -in server.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out server.crt -days 500 -sha256 -extfile v3.ext"
 
 # Download Latest Version of ChurchCRM
 WORKDIR /usr/local/apache2/
