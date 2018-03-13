@@ -33,7 +33,7 @@ services:
       MYSQL_PASSWORD_FILE: /run/secrets/MYSQL_PASSWORD
       MYSQL_USER_FILE: /run/secrets/MYSQL_USER
     volumes:
-      - churchcrm-volume:/usr/local/apache2/htdocs
+      - churchcrm-images:/usr/local/apache2/htdocs/Images
     secrets:
       - MYSQL_PASSWORD
       - MYSQL_USER
@@ -47,5 +47,5 @@ secrets:
     file: ./secrets/MYSQL_USER
 
 volumes:
-  churchcrm-volume:
+  churchcrm-images:
   db-volume:
