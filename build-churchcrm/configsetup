@@ -1,9 +1,0 @@
-#!/bin/sh
-sed -i "s/||DB_SERVER_NAME||/$MYSQL_DB_HOST/g" /web/html/Include/Config.php && \
-sed -i "s/||DB_NAME||/$MYSQL_DATABASE/g" /web/html/Include/Config.php && \
-sed -i "s/||DB_USER||/$MYSQL_USER/g" /web/html/Include/Config.php && \
-sed -i "s/||DB_PASSWORD||/$MYSQL_PASSWORD/g" /web/html/Include/Config.php && \
-sed -i "s/||URL||//g" /web/html/Include/Config.php && \
-sed -i "s/||ROOT_PATH||//g" /web/html/Include/Config.php
-
-exec "$@"

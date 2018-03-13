@@ -14,45 +14,38 @@ services:
       MYSQL_DATABASE: churchcrm
       MYSQL_USER_FILE: /run/secrets/MYSQL_USER
       MYSQL_PASSWORD_FILE: /run/secrets/MYSQL_PASSWORD
+    volumes:
+      - db-volume:/var/lib/mysql
     secrets:
       - MYSQL_PASSWORD
       - MYSQL_ROOT_PASSWORD
       - MYSQL_USER
 
-  churchcrm:
-    container_name: churchcrm
-    build:
-      context: ./build-churchcrm
+  alpinephp7:
+    container_name: crm-alpinephp7
+    build: ./build
+    ports:
+      - "80:80"
+      - "443:443"
     environment:
       MYSQL_DATABASE: churchcrm
       MYSQL_DB_HOST: crmdatabase
       MYSQL_PASSWORD_FILE: /run/secrets/MYSQL_PASSWORD
       MYSQL_USER_FILE: /run/secrets/MYSQL_USER
     volumes:
-      - html-volume:/usr/local/apache2/htdocs/
+      - churchcrm-volume:/usr/local/apache2/htdocs
     secrets:
       - MYSQL_PASSWORD
-      - MYSQL_ROOT_PASSWORD
       - MYSQL_USER
-    tty: true
-
-  alpinephp7:
-    container_name: crm-alpinephp7
-    build: ./build-php
-    ports:
-      - "8080:80"
-      - "443:443"
-    volumes:
-      - html-volume:/usr/local/apache2/htdocs/
-
-volumes:
-  html-volume:
 
 secrets:
-
   MYSQL_ROOT_PASSWORD:
     file: ./secrets/MYSQL_ROOT_PASSWORD
   MYSQL_PASSWORD:
     file: ./secrets/MYSQL_PASSWORD
   MYSQL_USER:
     file: ./secrets/MYSQL_USER
+
+volumes:
+  churchcrm-volume:
+  db-volume:
