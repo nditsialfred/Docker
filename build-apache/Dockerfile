@@ -13,31 +13,7 @@ RUN apk update && \
 
 FROM httpd:2-alpine
 
-RUN echo "@community http://dl-4.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
-    echo "@testing http://dl-4.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
-
-RUN apk update --repository http://dl-4.alpinelinux.org/alpine/edge/community \
-               --repository https://nl.alpinelinux.org/alpine/edge/main && \
-    apk upgrade && \
-    apk add --no-cache \
-    libressl \
-    curl \
-    openssl \
-    php7 \
-    php7-apache2 \
-    php7-openssl \
-    php7-mbstring \
-    php7-apcu \
-    php7-intl \
-    php7-mcrypt \
-    php7-json \
-    php7-gd \
-    php7-curl \
-    php7-fpm \
-    php7-mysqlnd \
-    php7-sqlite3 \
-    php7-phar
-
 COPY ./httpd.conf /usr/local/apache2/conf/httpd.conf
 COPY --from=localssl /server.key /usr/local/apache2/conf/
 COPY --from=localssl /server.crt /usr/local/apache2/conf/
+COPY ./html /usr/local/apache2/htdocs/

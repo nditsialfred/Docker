@@ -1,4 +1,4 @@
-FROM nimmis/alpine as churchcrm
+FROM alpine:3.7 as churchcrm
 MAINTAINER ChurchCRM
 
 WORKDIR /
@@ -13,27 +13,15 @@ RUN crmlatest=$(curl -s https://api.github.com/repos/churchCRM/CRM/releases/late
     unzip -q *.zip && \
     cp /churchcrm/Include/Config.php.example /churchcrm/Include/Config.php
 
-ARG MYSQL_DB_HOST
-ARG MYSQL_DATABASE
-ARG MYSQL_USER
-ARG MYSQL_PASSWORD
 
-RUN sed -i "s/||DB_SERVER_NAME||/$MYSQL_DB_HOST/g" /churchcrm/Include/Config.php && \
-    sed -i "s/||DB_NAME||/$MYSQL_DATABASE/g" /churchcrm/Include/Config.php && \
-    sed -i "s/||DB_USER||/$MYSQL_USER/g" /churchcrm/Include/Config.php && \
-    sed -i "s/||DB_PASSWORD||/$MYSQL_PASSWORD/g" /churchcrm/Include/Config.php && \
-    sed -i "s/||URL||//g" /churchcrm/Include/Config.php && \
-    sed -i "s/||ROOT_PATH||//g" /churchcrm/Include/Config.php
+FROM alpine:3.7
 
+COPY --from=churchcrm /churchcrm /usr/local/apache2/htdocs/
 
-FROM nimmis/alpine
+#COPY ./configsetup /usr/local/bin
+#RUN chmod +x /usr/local/bin/configsetup
 
-COPY --from=churchcrm /churchcrm /web/html
+WORKDIR /usr/local/apache2/htdocs/
 
-COPY ./configsetup /usr/local/bin
-RUN chmod +x /usr/local/bin/configsetup
-
-WORKDIR /web/html
-
-ENTRYPOINT ["/usr/local/bin/configsetup"]
-CMD ["/my_init"]
+#ENTRYPOINT ["/usr/local/bin/configsetup"]
+CMD ["/bin/sh"]
