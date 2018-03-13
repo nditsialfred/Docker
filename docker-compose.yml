@@ -6,52 +6,46 @@ version: '3.5'
 
 services:
 
-  crmdatabase: #Name of DB Host
-    container_name: crm-database
-    image: mariadb:10.2
+  database: #Name of DB Host
+    container_name: database
+    build: ./build-mysql
     environment:
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/MYSQL_ROOT_PASSWORD
-      MYSQL_DATABASE: churchcrm
+      MYSQL_ROOT_PWD_FILE: /run/secrets/MYSQL_ROOT_PWD
+      MYSQL_USER_DB: churchcrm
       MYSQL_USER_FILE: /run/secrets/MYSQL_USER
-      MYSQL_PASSWORD_FILE: /run/secrets/MYSQL_PASSWORD
-    secrets:
-      - MYSQL_PASSWORD
-      - MYSQL_ROOT_PASSWORD
-      - MYSQL_USER
-
-  alpinephp7:
-    container_name: crm-alpinephp7
-    build: ./build-php
-    ports:
-      - "80:80"
+      MYSQL_USER_PWD_FILE: /run/secrets/MYSQL_USER_PWD
     volumes:
-      - html-volume:/web/html
-    environment:
-      MYSQL_DATABASE: churchcrm
-      MYSQL_DB_HOST: crmdatabase
-      MYSQL_PASSWORD_FILE: /run/secrets/MYSQL_PASSWORD
-      MYSQL_USER_FILE: /run/secrets/MYSQL_USER
+      - db-volume:/var/lib/mysql
     secrets:
-      - MYSQL_PASSWORD
-      - MYSQL_ROOT_PASSWORD
+      - MYSQL_ROOT_PWD
       - MYSQL_USER
+      - MYSQL_USER_PWD
 
   churchcrm:
     container_name: churchcrm
-    build:
-      context: ./build-churchcrm
+    build: ./build
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      MYSQL_DATABASE: churchcrm
+      MYSQL_DB_HOST: database
+      MYSQL_USER_PWD_FILE: /run/secrets/MYSQL_USER_PWD
+      MYSQL_USER_FILE: /run/secrets/MYSQL_USER
     volumes:
-      - html-volume:/web/html
-    tty: true
-
-volumes:
-  html-volume:
+      - img-volume:/usr/local/apache2/htdocs/Images
+    secrets:
+      - MYSQL_USER_PWD
+      - MYSQL_USER
 
 secrets:
-
-  MYSQL_ROOT_PASSWORD:
-    file: ./secrets/MYSQL_ROOT_PASSWORD
-  MYSQL_PASSWORD:
-    file: ./secrets/MYSQL_PASSWORD
+  MYSQL_ROOT_PWD:
+    file: ./secrets/MYSQL_ROOT_PWD
   MYSQL_USER:
     file: ./secrets/MYSQL_USER
+  MYSQL_USER_PWD:
+    file: ./secrets/MYSQL_USER_PWD
+
+volumes:
+  img-volume:
+  db-volume:
