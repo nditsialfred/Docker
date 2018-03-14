@@ -23,7 +23,16 @@ services:
 
   churchcrm:
     container_name: churchcrm
-    build: ./build
+    build:
+      context: ./build
+      args: # !!! Edit these !!!
+        country: US # Country Name (2 letter code)
+        state: Tennessee # State or Province Name (full name)
+        locality: Nashville # Locality Name (eg, city)
+        organization: ChurchCRM # Organization Name (eg, company)
+        organizationalunit: IT # Organizational Unit Name (eg, section)
+        email: myemail@example.com # Your Email Address
+        commonname: localhost # Common Name (e.g. server FQDN or YOUR name)
     ports:
       - "80:80"
       - "443:443"

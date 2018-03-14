@@ -10,7 +10,6 @@ RUN echo "@edge http://dl-3.alpinelinux.org/alpine/edge/main" >> /etc/apk/reposi
     apk add --upgrade apk-tools@edge && \
     apk upgrade && \
     apk add --no-cache \
-    bash \
     curl \
     libressl \
     openssl \
@@ -47,10 +46,18 @@ WORKDIR /usr/local/apache2/conf/
 COPY ./server.csr.cnf .
 COPY ./v3.ext .
 
-RUN /bin/bash -c "openssl genrsa -des3 -passout pass:xxxx -out rootCA.key 2048" && \
-    /bin/bash -c "openssl req -x509 -passin pass:xxxx -new -nodes -key rootCA.key -sha256 -days 1024 -out rootCA.pem -config <( cat server.csr.cnf )" && \
-    /bin/bash -c "openssl req -new -sha256 -nodes -out server.csr -newkey rsa:2048 -keyout server.key -config <( cat server.csr.cnf )" && \
-    /bin/bash -c "openssl x509 -req -passin pass:xxxx -in server.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out server.crt -days 3600 -sha256 -extfile v3.ext"
+ARG country
+ARG state
+ARG locality
+ARG organization
+ARG organizationalunit
+ARG email
+ARG commonname
+
+RUN openssl genrsa -des3 -passout pass:xxxx -out rootCA.key 2048 && \
+    openssl req -x509 -passin pass:xxxx -new -nodes -key rootCA.key -sha256 -days 1024 -out rootCA.pem -subj "/C=$country/ST=$state/L=$locality/O=$organization/OU=$organizationalunit/emailAddress=$email/CN=$commonname" && \
+    openssl req -new -sha256 -nodes -out server.csr -newkey rsa:2048 -keyout server.key -subj "/C=$country/ST=$state/L=$locality/O=$organization/OU=$organizationalunit/emailAddress=$email/CN=$commonname" && \
+    openssl x509 -req -passin pass:xxxx -in server.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out server.crt -days 3600 -sha256 -extfile v3.ext
 
 # Download Latest Version of ChurchCRM
 WORKDIR /usr/local/apache2/
