@@ -40,7 +40,7 @@ EOF
 	    echo "CREATE DATABASE IF NOT EXISTS \`$MYSQL_USER_DB\` CHARACTER SET utf8 COLLATE utf8_general_ci;" >> $tfile
 
 	    if [ "$MYSQL_USER" != "" ]; then
-		echo "[i] Creating user: $MYSQL_USER with password $MYSQL_USER_PWD"
+		#echo "[i] Creating user: $MYSQL_USER with password $MYSQL_USER_PWD"
 		echo "GRANT ALL PRIVILEGES ON \`$MYSQL_USER_DB\`.* to '$MYSQL_USER'@'%' identified by '${MYSQL_USER_PWD}' ;" >> $tfile
 		echo "GRANT ALL PRIVILEGES ON \`$MYSQL_USER_DB\`.* to '$MYSQL_USER'@'localhost' identified by '${MYSQL_USER_PWD}' ;" >> $tfile
 		echo "FLUSH PRIVILEGES ;" >> $tfile
