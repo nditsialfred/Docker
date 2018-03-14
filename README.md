@@ -24,7 +24,7 @@ It is necessary to have Docker installed on your system for this to work. See ht
 
 ChurchCRM for Docker is set to run by default using SSL encryption. When building the images, the build script will create Self-Signed Certificates and install them into Apache. When visiting the local site, browsers will prompt you with an error/warning that they don't recognize the Certificate Authority *(which is yourself in this case)*. When this occurs, allow the exception and continue to the site.
 
-**NOTE:** PLEASE change the SSL config details under churchcrm/build/args section in the docker-compose.yml` file.
+**NOTE:** PLEASE change the SSL config details under churchcrm/build/args section in the `docker-compose.yml` file.
 
 ### Using a Domain Name instead of https://localhost
 
