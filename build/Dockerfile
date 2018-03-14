@@ -43,7 +43,6 @@ COPY ./httpd.conf /usr/local/apache2/conf/httpd.conf
 # SSL Generation
 WORKDIR /usr/local/apache2/conf/
 
-COPY ./server.csr.cnf .
 COPY ./v3.ext .
 
 ARG country
