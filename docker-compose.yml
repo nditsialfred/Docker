@@ -9,51 +9,35 @@ services:
   database: #Name of DB Host
     container_name: database
     build: ./build-mysql
-    environment:
-      MYSQL_ROOT_PWD_FILE: /run/secrets/MYSQL_ROOT_PWD
-      MYSQL_USER_DB: churchcrm
-      MYSQL_USER_FILE: /run/secrets/MYSQL_USER
-      MYSQL_USER_PWD_FILE: /run/secrets/MYSQL_USER_PWD
     volumes:
       - db-volume:/var/lib/mysql
     secrets:
-      - MYSQL_ROOT_PWD
-      - MYSQL_USER
-      - MYSQL_USER_PWD
+      - crm_secrets
 
   churchcrm:
     container_name: churchcrm
     build:
       context: ./build
-      args: # !!! Edit these !!!
-        country: US # Country Name (2 letter code)
-        state: Tennessee # State or Province Name (full name)
-        locality: Nashville # Locality Name (eg, city)
-        organization: ChurchCRM # Organization Name (eg, company)
-        organizationalunit: IT # Organizational Unit Name (eg, section)
-        email: myemail@example.com # Your Email Address
-        commonname: localhost # Common Name (e.g. server FQDN or YOUR name)
+      #args: # !!! Edit these !!!
+      #  country: US # Country Name (2 letter code)
+      #  state: Tennessee # State or Province Name (full name)
+      #  locality: Nashville # Locality Name (eg, city)
+      #  organization: ChurchCRM # Organization Name (eg, company)
+      #  organizationalunit: IT # Organizational Unit Name (eg, section)
+      #  email: myemail@example.com # Your Email Address
+      #  commonname: localhost # Common Name (e.g. server FQDN or YOUR name)
+    environment:
+      MYSQL_DB_HOST: database
     ports:
       - "80:80"
-      - "443:443"
-    environment:
-      MYSQL_DATABASE: churchcrm
-      MYSQL_DB_HOST: database
-      MYSQL_USER_PWD_FILE: /run/secrets/MYSQL_USER_PWD
-      MYSQL_USER_FILE: /run/secrets/MYSQL_USER
     volumes:
       - img-volume:/usr/local/apache2/htdocs/Images
     secrets:
-      - MYSQL_USER_PWD
-      - MYSQL_USER
+      - crm_secrets
 
 secrets:
-  MYSQL_ROOT_PWD:
-    file: ./secrets/MYSQL_ROOT_PWD
-  MYSQL_USER:
-    file: ./secrets/MYSQL_USER
-  MYSQL_USER_PWD:
-    file: ./secrets/MYSQL_USER_PWD
+  crm_secrets:
+    file: ./crm_secrets.json
 
 volumes:
   img-volume:

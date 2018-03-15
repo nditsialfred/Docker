@@ -2,10 +2,11 @@
 
 # parameters
 MYSQL_DATADIR=${MYSQL_DATADIR:-"/var/lib/mysql"}
-MYSQL_ROOT_PWD=$(cat /run/secrets/MYSQL_ROOT_PWD)
-MYSQL_USER=$(cat /run/secrets/MYSQL_USER)
-MYSQL_USER_PWD=$(cat /run/secrets/MYSQL_USER_PWD)
-MYSQL_USER_DB=$MYSQL_USER_DB
+
+MYSQL_ROOT_PW=$(cat /run/secrets/crm_secrets | jq -r '.MYSQL_ROOT_PWD')
+MYSQL_USER=$(cat /run/secrets/crm_secrets | jq -r '.MYSQL_USER')
+MYSQL_USER_PWD=$(cat /run/secrets/crm_secrets | jq -r '.MYSQL_USER_PWD')
+MYSQL_USER_DB=$(cat /run/secrets/crm_secrets | jq -r '.MYSQL_USER_DB')
 
 if [ -d "/run/mysqld" ]; then
         echo "[i] MySQL directory already present, skipping creation"

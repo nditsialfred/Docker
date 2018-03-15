@@ -4,7 +4,9 @@ MAINTAINER ChurchCRM
 RUN apk update && \
     apk upgrade && \
     apk add --no-cache \
-	       mariadb mariadb-client && \
+        jq \
+	      mariadb \
+        mariadb-client && \
 	  addgroup mysql mysql && \
 	  mkdir /scripts
 

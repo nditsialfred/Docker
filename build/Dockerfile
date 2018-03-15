@@ -11,8 +11,9 @@ RUN echo "@edge http://dl-3.alpinelinux.org/alpine/edge/main" >> /etc/apk/reposi
     apk upgrade && \
     apk add --no-cache \
     curl \
+    jq \
     libressl \
-    openssl \
+    #openssl \
     php7 \
     php7-apache2 \
     php7-apcu \
@@ -28,7 +29,6 @@ RUN echo "@edge http://dl-3.alpinelinux.org/alpine/edge/main" >> /etc/apk/reposi
     php7-mcrypt \
     php7-mysqli \
     php7-mysqlnd \
-    php7-openssl \
     php7-pdo \
     php7-pdo_mysql \
     php7-phar \
@@ -41,22 +41,22 @@ RUN echo "@edge http://dl-3.alpinelinux.org/alpine/edge/main" >> /etc/apk/reposi
 COPY ./httpd.conf /usr/local/apache2/conf/httpd.conf
 
 # SSL Generation
-WORKDIR /usr/local/apache2/conf/
+#WORKDIR /usr/local/apache2/conf/
 
-COPY ./v3.ext .
+#COPY ./v3.ext .
 
-ARG country
-ARG state
-ARG locality
-ARG organization
-ARG organizationalunit
-ARG email
-ARG commonname
+#ARG country
+#ARG state
+#ARG locality
+#ARG organization
+#ARG organizationalunit
+#ARG email
+#ARG commonname
 
-RUN openssl genrsa -des3 -passout pass:xxxx -out rootCA.key 2048 && \
-    openssl req -x509 -passin pass:xxxx -new -nodes -key rootCA.key -sha256 -days 1024 -out rootCA.pem -subj "/C=$country/ST=$state/L=$locality/O=$organization/OU=$organizationalunit/emailAddress=$email/CN=$commonname" && \
-    openssl req -new -sha256 -nodes -out server.csr -newkey rsa:2048 -keyout server.key -subj "/C=$country/ST=$state/L=$locality/O=$organization/OU=$organizationalunit/emailAddress=$email/CN=$commonname" && \
-    openssl x509 -req -passin pass:xxxx -in server.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out server.crt -days 3600 -sha256 -extfile v3.ext
+#RUN openssl genrsa -des3 -passout pass:xxxx -out rootCA.key 2048 && \
+#    openssl req -x509 -passin pass:xxxx -new -nodes -key rootCA.key -sha256 -days 1024 -out rootCA.pem -subj "/C=$country/ST=$state/L=$locality/O=$organization/OU=$organizationalunit/emailAddress=$email/CN=$commonname" && \
+#    openssl req -new -sha256 -nodes -out server.csr -newkey rsa:2048 -keyout server.key -subj "/C=$country/ST=$state/L=$locality/O=$organization/OU=$organizationalunit/emailAddress=$email/CN=$commonname" && \
+#    openssl x509 -req -passin pass:xxxx -in server.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out server.crt -days 3600 -sha256 -extfile v3.ext
 
 # Download Latest Version of ChurchCRM
 WORKDIR /usr/local/apache2/
