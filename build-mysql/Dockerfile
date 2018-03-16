@@ -4,15 +4,17 @@ MAINTAINER ChurchCRM
 RUN apk update && \
     apk upgrade && \
     apk add --no-cache \
+        figlet \
         jq \
 	      mariadb \
-        mariadb-client && \
+        mariadb-client \
+        ncurses && \
 	  addgroup mysql mysql && \
 	  mkdir /scripts
 
-COPY ./startup.sh /scripts/startup.sh
-RUN chmod +x /scripts/startup.sh
+COPY ./startup /scripts/startup
+RUN chmod +x /scripts/startup
 
 EXPOSE 3306
 
-ENTRYPOINT ["/scripts/startup.sh"]
+ENTRYPOINT ["/scripts/startup"]

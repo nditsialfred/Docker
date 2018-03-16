@@ -1,12 +1,36 @@
-#!/bin/sh
+#!/bin/ash
 
 # parameters
 MYSQL_DATADIR=${MYSQL_DATADIR:-"/var/lib/mysql"}
 
-MYSQL_ROOT_PW=$(cat /run/secrets/crm_secrets | jq -r '.MYSQL_ROOT_PWD')
-MYSQL_USER=$(cat /run/secrets/crm_secrets | jq -r '.MYSQL_USER')
-MYSQL_USER_PWD=$(cat /run/secrets/crm_secrets | jq -r '.MYSQL_USER_PWD')
-MYSQL_USER_DB=$(cat /run/secrets/crm_secrets | jq -r '.MYSQL_USER_DB')
+MYSQL_ROOT_PWD=$(cat /run/secrets/crm_secrets | jq -r '.mysql.MYSQL_ROOT_PWD')
+MYSQL_USER=$(cat /run/secrets/crm_secrets | jq -r '.mysql.MYSQL_USER')
+MYSQL_USER_PWD=$(cat /run/secrets/crm_secrets | jq -r '.mysql.MYSQL_USER_PWD')
+MYSQL_USER_DB=$(cat /run/secrets/crm_secrets | jq -r '.mysql.MYSQL_USER_DB')
+
+if [ $MYSQL_ROOT_PWD = "changeme" ]; then
+    figlet -f colossal "WARNING"
+    red=$(tput setaf 1)    # Red
+    reset=$(tput sgr0)
+    echo "${red}*********************************************"
+    echo "${red}WARNING!!!"
+    echo "${red}YOU DID NOT CHANGE THE MYSQL_ROOT_PWD IN THE crm_secrets.json FILE!!!"
+    echo "${red}This is EXTREMELY insecure. Please go back and change the password to something more secure and re-build your images by running `docker-compose build`"
+    echo "${red}*********************************************"
+    ${reset}
+    echo ""
+fi
+if [ $MYSQL_USER_PWD = "changeme" ]; then
+    figlet -f colossal "WARNING"
+    red=$(tput setaf 1)    # Red
+    reset=$(tput sgr0)
+    echo "${red}*********************************************"
+    echo "${red}WARNING!!!"
+    echo "${red}YOU DID NOT CHANGE THE MYSQL_USER_PWD IN THE crm_secrets.json FILE!!!"
+    echo "${red}This is EXTREMELY insecure. Please go back and change the password to something more secure and re-build your images by running `docker-compose build`"
+    echo "${red}*********************************************"
+    ${reset}
+fi
 
 if [ -d "/run/mysqld" ]; then
         echo "[i] MySQL directory already present, skipping creation"

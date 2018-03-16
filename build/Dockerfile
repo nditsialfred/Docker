@@ -11,9 +11,10 @@ RUN echo "@edge http://dl-3.alpinelinux.org/alpine/edge/main" >> /etc/apk/reposi
     apk upgrade && \
     apk add --no-cache \
     curl \
+    figlet \
     jq \
     libressl \
-    #openssl \
+    ncurses \
     php7 \
     php7-apache2 \
     php7-apcu \
@@ -40,24 +41,6 @@ RUN echo "@edge http://dl-3.alpinelinux.org/alpine/edge/main" >> /etc/apk/reposi
 # Copy Apache configurations
 COPY ./httpd.conf /usr/local/apache2/conf/httpd.conf
 
-# SSL Generation
-#WORKDIR /usr/local/apache2/conf/
-
-#COPY ./v3.ext .
-
-#ARG country
-#ARG state
-#ARG locality
-#ARG organization
-#ARG organizationalunit
-#ARG email
-#ARG commonname
-
-#RUN openssl genrsa -des3 -passout pass:xxxx -out rootCA.key 2048 && \
-#    openssl req -x509 -passin pass:xxxx -new -nodes -key rootCA.key -sha256 -days 1024 -out rootCA.pem -subj "/C=$country/ST=$state/L=$locality/O=$organization/OU=$organizationalunit/emailAddress=$email/CN=$commonname" && \
-#    openssl req -new -sha256 -nodes -out server.csr -newkey rsa:2048 -keyout server.key -subj "/C=$country/ST=$state/L=$locality/O=$organization/OU=$organizationalunit/emailAddress=$email/CN=$commonname" && \
-#    openssl x509 -req -passin pass:xxxx -in server.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out server.crt -days 3600 -sha256 -extfile v3.ext
-
 # Download Latest Version of ChurchCRM
 WORKDIR /usr/local/apache2/
 
@@ -76,6 +59,9 @@ WORKDIR /usr/local/apache2/htdocs/
 # Modify php.ini and set config setup to be an executable
 RUN sed -i "s/upload_max_filesize = 2M/upload_max_filesize = 16M/g" /etc/php7/php.ini && \
     sed -i "s/post_max_size = 8M/post_max_size = 32M/g" /etc/php7/php.ini && \
+    sed -i "s/zlib.output_compression = Off/zlib.output_compression = On/g" /etc/php7/php.ini && \
+    sed -i "s/;error_log = php_errors.log/error_log = \/proc\/self\/fd\/2/g" /etc/php7/php.ini && \
+    sed -i '/;error_log = syslog/a error_log = \/usr\/local\/apache2\/logs\/php_errors.log' /etc/php7/php.ini && \
     chmod +x /usr/local/bin/configsetup
 
 # Run the configsetup file on container start
