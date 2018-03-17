@@ -1,16 +1,14 @@
 ## Docker ChurchCRM
 
-This is the Docker Installation of ChurchCRM. This will build the latest release of ChurchCRM for Docker. It is made with Apache/PHP7/ChurchCRM and MariaDB in 2 separate containers that work together.
+This is the Docker Installation of ChurchCRM. This will build the latest release of ChurchCRM for Docker. It is made with Apache/PHP7/ChurchCRM and MariaDB in 2 separate containers and a third container (nginx working as a reverse proxy) that work together.
 
 ### How To Use
 
 It is necessary to have Docker installed on your system for this to work. See https://www.docker.com/community-edition#/download...
 
 * Clone this repository.
-* Change your desired **database info** and **passwords** in the /secrets files.
-    - **MYSQL_ROOT_PWD** = set this for the MYSQL root password in your installation **PLEASE CHANGE!!!**
-    - **MYSQL_USER** = set this as the churchcrm database username (Default: churchcrm)
-    - **MYSQL_USER_PWD** = set this for the churchcrm database user password **PLEASE CHANGE!!!**
+* Change your desired **database info** and **passwords** in the crm_secrets.json file. **PLEASE CHANGE**
+* Change your desired SSL setup in the docker_compose.yml file under the nginx: args section. (Read commented lines to see your options)
 * From the command line, navigate to the root folder of your local repository and use docker-compose to build and run ChurchCRM. Run the following commands.
     - `docker-compose build`
     - `docker-compose up`
@@ -22,9 +20,13 @@ It is necessary to have Docker installed on your system for this to work. See ht
 
 ### SSL
 
-ChurchCRM for Docker is set to run by default using SSL encryption. When building the images, the build script will create Self-Signed Certificates and install them into Apache. When visiting the local site, browsers will prompt you with an error/warning that they don't recognize the Certificate Authority *(which is yourself in this case)*. When this occurs, allow the exception and continue to the site.
+ChurchCRM for Docker is set to run by default using SSL encryption. There are 3 build options in regards to SSL.
 
-**NOTE:** PLEASE change the SSL config details under churchcrm/build/args section in the `docker-compose.yml` file.
+* `build`: This option will create an SSL certificate for you. Please fill out your information in the docker_compose.yml file under the nginx: args section.
+* `own`: With this option, you will need to provide your own SSL certificates. Please put your own "server.crt" and "server.key" files in the "buildnginx/conf.d folder. SSL will not work if chooseing this option and not adding the correctly named certificates there.
+* `none`: This will run an installation of ChurchCRM without SSL. You will be able to access your installation at http://localhost (as opposed to https://localhost)
+
+**NOTE** While using SSL on localhost, browsers will prompt with an error/warning that they don't recognize the Certificate Authority *(which is yourself in this case)*. When this occurs, allow the exception and continue to the site.
 
 ### Using a Domain Name instead of https://localhost
 
