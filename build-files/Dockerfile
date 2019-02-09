@@ -1,20 +1,5 @@
-FROM jaskipper/alpine-apache-php7
+FROM 7.3-apache
 MAINTAINER ChurchCRM
-
-RUN apk update && apk upgrade && \
-
-    # Make info file about this build
-    printf "Build of skipper/alpine-apache, date: %s\n"  `date -u +"%Y-%m-%dT%H:%M:%SZ"` >> /etc/BUILD
-
-RUN apk add --no-cache \
-            jq \
-            php7-session@community \
-            php7-pdo@community \
-            php7-xml@community \
-            php7-exif@community \
-            php7-pdo_mysql@community \
-            php7-gettext@community \
-            php7-iconv@community
 
 RUN mkdir /web/churchcrm
 
