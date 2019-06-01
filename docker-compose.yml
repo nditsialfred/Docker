@@ -7,7 +7,9 @@ version: '2'
 services:
 
   database: #Name of DB Host
-    container_name: database
+    container_name: churchdb
+    ports:
+      - "6060:3306"
     image: jaskipper/alpine-mariadb
     env_file:
       - .env
