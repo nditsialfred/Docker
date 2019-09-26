@@ -12,11 +12,11 @@ Once complete, Start ChurchCRM in Docker by using the Docker RUN command from th
 
 For example, you can start MariaDB first with the following command. Make sure to **change the passwords** in the ``.env`` file first.
 
-``docker run --name database --env-file .env -d jaskipper/alpine-mariadb``
+``docker run --name churchdb --env-file .env -d jaskipper/alpine-mariadb``
 
 Then start the ChurchCRM container:
 
-``docker run --name churchcrm -p 80:80 --link database --env-file .env -d churchcrm/crm``
+``docker run --name churchcrm -p 80:80 --link churchdb --env-file .env -d churchcrm/crm``
 
 Visit your website and you will be up and running. Log in with the default username ``admin`` and password ``changeme`` and then change your admin password on the next screen.
 
